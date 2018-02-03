@@ -1,0 +1,192 @@
+TickleSharp 0.1
+===============
+Oct. 28, 2003
+
+Description
+-----------
+TickleSharp is a portable binding to the Tcl/Tk scripting language for the
+.NET platform.  The assembly consists of two files, one is a small C wrapper 
+library that allows for Callbacks into your .NET code, and the other is the 
+assembly itself written in C#.  The C# code uses P/Invoke to get at the 
+wrapper and Tcl/Tk DLL's.
+
+What you need to build and run the library
+------------------------------------------
+*nix:
+gcc (Tested with 3.2.2, others may work)
+Tcl/Tk shared libraries and init scripts (Tcl/Tk version 8.4.4)
+DotGNU (pnet) or *Mono (Tested with pnet 0.6 and mint 0.26)
+
+(*)Note: The Mono jit compiler did not work with the tclwrapper library.  At
+this point I'm not sure what side the problem is on.  It does however,
+work with ilrun and mint without any problems.  It, also compiled under Mono 
+(mcs) without a hitch. ****FIXED NOW..... I THINK****
+
+Windows:
+gcc (mingw/msys) (Tested with mingw32 3.2)
+Tcl/Tk shared libraries and (8.4.4)
+DotGNU (pnet) (Tested with pnet 0.6) 
+
+If you do not have gcc for windows, a pre-compiled dll is provided.
+Instructions on building without a compile step on the wrapper is included
+below.
+
+If you need a portable CLR, I recommend the DotGNU set of tools.  Get them
+from:
+   http://www.dotgnu.org/
+   
+Or the Mono tools from:
+   http://www.go-mono.com
+
+For *nix, the choice of the CLR is yours, one is as good as the other for
+the most part.  As for windows, both should work also.
+
+Building the library
+--------------------
+To build the system for use, do the following:
+
+*nix:
+cd ~/ticklesharp/build ;(or where ever you unpacked it at)
+./buildunix.sh
+
+Windows:
+cd c:\ticklesharp\build (or where ever you unpacked it at)
+buildwindows.bat ;(builds the wrapper dll with gcc for windows)
+or
+buildwindows.bat NOGCC ;(uses the pre-compiled wrapper dll)
+
+If all went well during the build, you will have the following in the bin
+directory:
+
+*nix:
+TickleSharp.dll
+libtclwrapper.so
+
+Windows:
+TickleSharp.dll
+tclwrapper.dll
+
+and also in the bin directory for both systems you will have:
+
+tcltest.exe
+Hello.exe
+Scribble.exe
+TclSharpCalc.exe
+
+NOTE:
+The build scripts assume you are using the pnet (DotGNU) C# compiler and gcc
+as your C compiler.  Change as needed if you are using a different set of
+compilers and tools.
+
+For Windows, there is a Makefile for VS7 (contributed by patthoyts).  Not
+fully tested as of yet, though it seems to work fine.  To build with it, make 
+sure your VS environment variables are set right, and run: 
+cd c:\ticksharp\build; nmake -f Makefile.vcs.  It should do the same as the
+other build scripts, but with the MS tool-set.
+
+Installing
+----------
+To install and run the examples (and use the library itself) you will need 
+Tcl/Tk 8.4 or at least part of it.  To save time, I would just install the
+whole thing.  On *nix and windows this will be quite a simple matter. 
+
+Getting Tcl/Tk 8.4 in source form from:
+   http://sourceforge.net/project/showfiles.php?group_id=10894
+
+Unpack the two (one for Tcl and another for Tk) archive files and run the 
+appropriate configure script with the --enable-threads switch.  See the Tcl
+and Tk README files for more info.
+
+If you want to compile it under windows and do not have MS VC, you can also
+get the msys package to build it with (it includes gcc for windows).  Get msys
+at the above link also.
+
+Getting Tcl/Tk 8.4 in binary form from:
+   http://aspn.activestate.com/ASPN/Downloads/ActiveTcl
+
+At the Activestate site you will find several pre-compiled binaries for various
+platforms, Windows included.
+
+You can choose ether route with installing Tcl/Tk but I'd recommend just doing
+it from the sources.  It's quite easy to build, even under windows (with
+msys/mingw-gcc).
+
+After Tcl/Tk is all installed, then you can install TickleSharp.  Do this by
+editing and running the following:
+
+*nix:
+./installunix.sh
+
+Windows:
+installwindows.bat
+
+The default install location is setup for PNET's default install.  Change as
+needed for your CLR or root install location.
+
+Once you get the wrapper dll and TickleSharp assembly installed, you should
+be able to run the samples and start coding with the library.
+
+Using the Assembly:
+-------------------
+Once you get the samples to run, you are then ready to do you own coding.
+Looking at the samples and the TickleSharp.cs code should get you on
+your way.  The one thing I will explain here is the way callbacks are handled.
+
+The Way I implemented callbacks into the .NET code is a little different
+then normal callbacks in .NET.  To explain, lets first look at a callback 
+delegate prototype for TickleSharp:
+   public delegate int CmdProc (int argArrInst);
+
+As you can see, there is only one parameter passed to your callback, and thats 
+the instance number of the callback.  This in-turn will be passed to the 
+TclTk.GetArgArray method along with the registered callback name, to get the 
+actual array name containing the instance parameter(s) in it.
+
+example:
+   public static int MyCmdProc (int ArgArrInst)
+   {
+      int iTclRet;
+      String Argv = tcl.GetArgArray ("testcmd", ArgArrInst);
+	 
+      Console.WriteLine ("Number of args sent to callback: {0}",
+                          tcl.GetParam (Argv, 0));
+
+      Console.WriteLine ("Parameter no. 1 is: {0}",
+                          tcl.GetParam (Argv, 1));
+
+      tcl.FreeArgArray (Argv);
+      return 0;
+   }
+
+Elsewhere in your code you would have initialized the tcl object and made a
+call the TclTk.CreateCommand method to register your command procedure 
+(callback).
+
+Once you get your Argument array name, you can then call the TclTk.GetParam 
+method to retrieve your parameters.  This is similar to the way you do it with
+the Tcl C interface.  The Argument array will be at least one element long, as
+the first element (0) will be the number of arguments sent to the callback.  
+A call to TclTk.FreeArgArray, frees up the array instance and keeps things
+clean and fresh.
+
+Some of you may ask "Why did he choose this method for callbacks, is he an
+idiot?"  Why yes, I am :-)  I did have a few reasons to go this route.  The
+first and foremost reason is it keeps more code in the "Managed" realm.  Not a 
+lot of unsafe code included (less pointers), so we get more of the management 
+of .NET working for us.  Next, we can have callbacks with a variable amount 
+or optional parameters.  Also after looking into the code, I saw this method 
+as a more portable solution, and one that should be thread safe.  Last, this 
+way keeps the code simple, and I'm a big fan of KISS.  From it you have no big
+C or C# hacks, and just a bit of C & C# (very little) with no Reflection etc 
+on the C# side.
+
+Contact Info:
+=============
+If you have any problems or successes please email me at: jscottb@bonbon.net
+
+Anyone running it on a non X86 based Linux or any non Linux let me know how
+it was and if it works.  Also, if you get it going under a MS based CLR,
+I'd like to know, as I live in a Windows-less machine home, well one that will
+run the MS CLR anyway :-)  Any new build/install scripts for other systems will
+be much appreciated.  I have started a Mono and MS CLR build install script,
+but not sure if they work good yet.

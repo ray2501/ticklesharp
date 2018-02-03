@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ProductVersion>0.1</ProductVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>Library</OutputType>
+    <DefineConstants>UNIX_SYSTEM</DefineConstants>
+  </PropertyGroup>
+
+</Project>

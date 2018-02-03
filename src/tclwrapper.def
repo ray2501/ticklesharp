@@ -1,0 +1,2 @@
+LIBRARY tclwrapper.dll
+EXPORTS CreateCommand = _CreateCommand@12
