@@ -183,11 +183,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/danilo/Public/src/TickleSharp/TickleSharp.csproj",
+      "projectUniqueName": "/home/danilo/Public/ticklesharp/src/TickleSharp/TickleSharp.csproj",
       "projectName": "TickleSharp",
-      "projectPath": "/home/danilo/Public/src/TickleSharp/TickleSharp.csproj",
+      "projectPath": "/home/danilo/Public/ticklesharp/src/TickleSharp/TickleSharp.csproj",
       "packagesPath": "/home/danilo/.nuget/packages/",
-      "outputPath": "/home/danilo/Public/src/TickleSharp/obj/",
+      "outputPath": "/home/danilo/Public/ticklesharp/src/TickleSharp/obj/",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "/usr/share/dotnet/sdk/NuGetFallbackFolder"

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+mkdir -p bin
 cd src
 echo "Building libraries...."
 gcc -fPIC -D__UNIX__ -shared -o ../bin/libtclwrapper.so tclwrapper.c -ltcl8.6 -ltk8.6
