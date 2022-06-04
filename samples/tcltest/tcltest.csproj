@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="TickleSharp">
       <HintPath>/usr/local/lib64/TickleSharp.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion> 
+      <SpecificVersion>False</SpecificVersion>
       <!-- You may set it to true if your dll has a specific version -->
     </Reference>
   </ItemGroup>
